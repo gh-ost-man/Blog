@@ -1,0 +1,23 @@
+{
+    "name": "admin/blog",
+    "authors": [
+        {
+            "name": "Black Ghost",
+            "email": "mcramiel@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "controllers\\" :"controllers/",
+            "core\\" :"core/",
+            "models\\" :"models/"
+        },
+        "files": [
+            "config/config.php"
+        ]
+    },
+    "require": {
+       "php": "^8",
+        "phpmailer/phpmailer": "^6.3"
+    }
+}
