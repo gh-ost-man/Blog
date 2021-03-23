@@ -63,6 +63,10 @@
   if(!isset($_SESSION)) session_start();
   var_dump($_SESSION);
   echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
 
   //if (isset($_SESSION['error'])){
 ?>
