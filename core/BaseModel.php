@@ -134,6 +134,7 @@ abstract class BaseModel
         //який клас викликав метод
         $obj_name = get_called_class();
         $obj = new $obj_name;
+       
         $table = static::$table;
         
         static::$sql_str = "SELECT * FROM `$table`";
@@ -159,7 +160,63 @@ abstract class BaseModel
         $conn = ConnectDB::connectDB();
         $stmt = $conn->prepare(static::$sql_str);
         $stmt->execute();
+
         $result = $stmt->fetch(PDO::FETCH_OBJ);
         return $result;
+    }
+
+    public function all()
+    {
+        $conn = ConnectDB::connectDB();
+        $stmt = $conn->prepare(static::$sql_str);
+        $stmt->execute();
+        
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+        return $result;
+    }
+
+    static function delete($params = [])
+    {
+        $conn = ConnectDB::connectDB();
+        $table = static::$table;
+        $sql_where = [];
+
+        foreach($params as $key => $value){
+            $sql_where[] .= "`$key` = '$value'";
+        }
+        
+        $sql_where = implode(' AND ', $sql_where);
+        $sql = "DELETE FROM `$table` WHERE $sql_where";
+        $stmt = $conn->prepare($sql);
+
+        return $stmt->execute();
+    }
+
+    public function update($params = [])
+    {
+        $conn = ConnectDB::connectDB();
+        $table = static::$table;
+        
+        $data = get_object_vars($this);
+        $values = [];
+
+        foreach($data as $key => $value){
+            $values[] = "`$key` = :$key";
+        }
+        
+        $sql_where = [];
+        foreach($params as $key => $value){
+            $sql_where[] = "`$key` = '$value'";
+        }
+        
+        $sql_where = implode(' AND ', $sql_where);
+        $sql_set = implode(', ', $values);
+        $sql = "UPDATE `$table` SET $sql_set WHERE $sql_where";
+        $stmt = $conn->prepare($sql);
+        foreach($data as $key => $value){
+            $stmt->bindParam(":$key", $data[$key]);
+        }
+
+        return $stmt->execute();
     }
 }

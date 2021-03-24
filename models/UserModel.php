@@ -14,7 +14,7 @@ class UserModel extends BaseModel
 
     static $table = 'users';
 
-    const ROLE = ['administrator' => 'Адміністратор', 'follower' => 'Підписник', 'autor' => 'Автор'];
+    const ROLE = ['administrator' => 'Administrator', 'follower' => 'Follower', 'autor' => 'Autor'];
 
     public function rules() 
     {
