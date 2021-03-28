@@ -44,12 +44,15 @@
                     
                     $this->redirect('/blog');
                 }
+                else {
+                    $_SESSION['error'] = 'Email or password incorrect';
+                    $this->render('login', ['model' => $model]);
+                }
             }
 
             $this->render('login', ['model' => $model]);
         }
 
-       
         public function actionRegister()
         {
             // Пошук по email чи не має такого емайлу в БД
@@ -75,7 +78,7 @@
                         }
                         move_uploaded_file($_FILES['avatar']['tmp_name'], 'avatar/' . $fileName);
                     } else {
-                        $fileName = 'notAvatar.png';
+                        $fileName = 'noAvatar.png';
                     }
                    
                     $model->url_avatar = 'avatar/' . $fileName;     
@@ -97,7 +100,7 @@
             $this->render('create',['model' => $model]);
         }
 
-        //Для відправки повідомлення для підтвердження
+        //Для відправки повідомлення на пошту для підтвердження
         public function actionSendEmail($user)
         {
             $mail = new PHPMailer(true);
@@ -131,9 +134,9 @@
         {
             //1. Перевірити чи даний користувач непідтвердив свою електронну адресу
 
-             $user = UserModel::find()->where(['id' => $_GET['user'], 'confirm' => 1])->one();
+            $user = UserModel::find()->where(['id' => $_GET['user'], 'confirm' => 1])->one();
             if($user){
-                echo 'OHHH';
+                echo 'OH NO NO NO';
                 die();
             } 
 
@@ -159,24 +162,26 @@
             $this->redirect('/blog');
         }
 
-        public function actionLogOut()
+        public function actionSignOut()
         {
             session_unset();
             session_destroy();
+
             $this->redirect('/blog');
         }
 
         public function actionEdit()
         {
+            $this->layots = true;
             $model = new UserModel;
 
             $user = UserModel::find()
                     ->where(['id' => $_GET['id']])
                     ->one();
 
-                    //заповнює поля 
+            //заповнює поля 
             foreach($user as $key => $value){
-                if($key != 'password'){
+                if($key != 'password') {
                     $model->{$key} = $value;
                 }
             }
@@ -185,7 +190,7 @@
                 $model->password = $this->passwordHasher( $model->password);
                 
                 if($_FILES['avatar']['name'] != ''){
-                    if($model->url_avatar != 'avatar/notAvatar.png'){
+                    if($model->url_avatar != 'avatar/noAvatar.png'){
                         unlink($model->url_avatar);
                     }
                     $fileExtension = explode('.', $_FILES['avatar']['name']);
@@ -210,6 +215,24 @@
                 ]);
                 $this->redirect('/blog');
             }
-            $this->render('create',['model' => $model]);
+            $this->render('create', ['model' => $model]);
+        }
+
+        /**
+         * Refresh role 
+         */
+        public function actionRefresh()
+        {
+            $user = UserModel::find()
+            ->where(['id' => $_GET['id']])
+            ->one();
+
+            $_SESSION['user'] = json_encode([
+                'role' => $user->role,
+                'nick' => $user->nick,
+                'email' => $user->email,
+                'url_avatar' => $user->url_avatar
+            ]);
+            $this->redirect('/blog');
         }
     }

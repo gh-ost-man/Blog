@@ -69,8 +69,6 @@ abstract class BaseModel
                                 $error = true;
                             }
                         }
-
-                       
                     }
                 break;
                 case 'email':
@@ -154,7 +152,6 @@ abstract class BaseModel
         }
         return $this;
     }
-
     public function one()
     {
         $conn = ConnectDB::connectDB();

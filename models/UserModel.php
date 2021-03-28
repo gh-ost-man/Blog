@@ -14,7 +14,7 @@ class UserModel extends BaseModel
 
     static $table = 'users';
 
-    const ROLE = ['administrator' => 'Administrator', 'follower' => 'Follower', 'autor' => 'Autor'];
+    const ROLE = ['administrator' => 'Administrator', 'follower' => 'Follower', 'author' => 'Author'];
 
     public function rules() 
     {
@@ -25,12 +25,14 @@ class UserModel extends BaseModel
         ];
     }
 
+    static function getRoles()
+    {
+        return self::ROLE;
+    }
     public function userValidate($model)
     {
         //  Стандартні валідації
         //  $this->validate();
         //  Додаткорві методи валідації
-
-
     }
 }
